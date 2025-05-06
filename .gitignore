@@ -1,0 +1,16 @@
+.env
+/_server/node_modules/*
+/_server/node_modules
+/node_modules/*
+/node_modules
+/tmp/*
+/tmp
+/_server/config/
+/_server/config/config.json
+/config/config.json
+stderr.log
+.htaccess
+/_server/package-lock.json
+package-lock.json
+combined.log
+error.log
