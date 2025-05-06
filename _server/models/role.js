@@ -1,8 +1,9 @@
 'use strict';
 const {
-  Model,
-  UUIDV4
+  Model
 } = require('sequelize');
+const { v4: uuidv4 } = require('uuid')
+
 module.exports = (sequelize, DataTypes) => {
   class role extends Model {
     /**
@@ -15,16 +16,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   role.init({
-    id:{
+    id: {
+      allowNull: false,
+      primaryKey: true,
       type: DataTypes.UUID,
-      allownull: false,
-      primarykey: true,
-      defaultvalue: UUIDV4,
+      defaultValue: uuidv4
     },
     name: {
       type: DataTypes.STRING,
-      allownull: false,
-      unique: true,
+      unique: true
     }
   }, {
     sequelize,

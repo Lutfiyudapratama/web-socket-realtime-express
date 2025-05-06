@@ -1,161 +1,157 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>whatsap</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #ece5dd;
+            font-family: sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .chat-card {
+        .chat-container {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
             max-width: 600px;
-            margin: 30px auto;
-            height: 80vh;
+            height: 70vh;
             display: flex;
             flex-direction: column;
         }
 
-        .chat-messages {
-            flex: 1;
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .chat-body {
+            flex-grow: 1;
+            padding: 15px;
             overflow-y: auto;
-            padding: 20px;
-            background-color: #e5ddd5;
-            display: flex;
-            flex-direction: column;
         }
 
         .message {
+            padding: 8px 12px;
+            border-radius: 8px;
             margin-bottom: 10px;
-            max-width: 75%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            position: relative;
-            display: inline-block;
+            clear: both;
+            max-width: 70%;
+            font-size: 0.9em;
         }
 
-        .message.sent {
+        .message-sent {
             background-color: #dcf8c6;
-            align-self: end;
-            border-bottom-right-radius: 0;
+            align-self: flex-end;
         }
 
-        .message.received {
-            background-color: #ffffff;
-            align-self: start;
-            border-bottom-left-radius: 0;
+        .message-received {
+            background-color: #f0f0f0;
+            align-self: flex-start;
         }
 
-        .chat-input {
-            border-top: 1px solid #ccc;
-            padding: 10px;
-            background: #f0f0f0;
+        .message-info {
+            font-size: 0.7em;
+            color: #777;
+            margin-top: 3px;
         }
 
-        .chat-input input {
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            padding: 10px 15px;
-            margin-right: 10px;
+        .message-sent .message-info {
+            text-align: right;
         }
 
-        .chat-input button {
-            border: none;
-            background-color: #008069;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 50%;
+        .input-area {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
         }
     </style>
 </head>
 
 <body>
-
-    <div class="container">
-        <div class="card chat-card shadow">
-            <div class="card-header bg-success text-white">
-                <div>
-                    <div>
-                    <img src="t.png" width="30" height="30" class="d-inline-block align-text-top">
-                    <strong>Simple Chat</strong>
-                  </div>                  
-                </div>
-            </div>
-
-            <div class="card-body chat-messages" id="chatMessages">
-                <!-- Pesan-pesan akan muncul di sini -->
-            </div>
-
-            <div class="chat-input d-flex align-items-center">
-                <input type="text" id="messageInput" class="form-control" placeholder="Ketik pesan...">
-                <input type="text" id="fromInput" class="form-control" placeholder="From" style="max-width: 120px;">
-                <button onclick="sendMessage()"><i class="bi bi-send">➤</i></button>
-            </div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h4>Ruang Gibah XI PPLG I</h4>
+        </div>
+        <div class="chat-body" id="chat-messages">
+        </div>
+        <div class="input-area">
+            <input type="text" class="form-control" id="name-input" placeholder="Nama Anda">
+            <input type="text" class="form-control" id="message-input" placeholder="Pesan Anda">
+            <button class="btn btn-primary" onclick="sendMessage()">Kirim</button>
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script untuk fungsi kirim pesan -->
-
     <script>
-        const socket = new WebSocket('ws://127.0.0.1:3001')
-        socket.onopen = () =>console.log('connect to server')
-        socket.onmessage = async (event) => {
-            console.log(`on message: ${json.stringfy(event?.data)}`)
+        const socket = new WebSocket('ws://127.0.0.1:3002')
+
+        socket.onopen = () => console.log(`CONNECT TO SERVER`)
+        socket.onmessage = (event) => {
+            console.log(`ON MESSAGE: ${JSON.stringify(event?.data)}`)
         }
-        socket.onerror = (event) => console.log(`on error: ${json.stringfy(event?.data)}`)
-        socket.onclose = (event) => console.log(`on close: ${json.stringfy(event?.data)}`)
+        socket.onerror = (event) => console.log(`ON ERR: ${JSON.stringify(event)}`)
+        socket.onclose = (event) => console.log(`ON CLOSE: ${JSON.stringify(event)}`)
+
+        const chatMessages = document.getElementById('chat-messages');
+        const nameInput = document.getElementById('name-input');
+        const messageInput = document.getElementById('message-input');
+
         function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const fromInput = document.getElementById('fromInput');
-            const chatMessages = document.getElementById('chatMessages');
-            const messageText = messageInput.value.trim();
-            const fromText = fromInput.value.trim();
-            fetch("http://127.0.0.1:3001/send-message", {
-                method: "POST",
+            const name = nameInput.value.trim();
+            const message = messageInput.value.trim();
+
+            fetch("http://127.0.0.1:3002/send-message", {
+                method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
-                    "accept": "application/json"
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({
-                    name: fromText,
-                    message: messageText
+                    name: name,
+                    message: message
                 })
             }).then(res => console.log(res))
-                .then(async(Response) => await console.log(`RESPONSE 2: ${response}`))
-                .catch(err => console.log(`err: ${err}`))
+                .then(async (response) => await console.log(`RESPONSE 2: ${response}`))
+                .catch(err => console.log(`ERR: ${err}`))
 
-            if (messageText === '') return;
+            if (name && message) {
+                const newMessage = document.createElement('div');
+                newMessage.classList.add('message', 'message-sent', 'mb-2', 'p-2', 'rounded');
+                newMessage.innerHTML = `
+                    <strong>${name}:</strong> ${message}
+                    <div class="message-info text-end">${getCurrentTime()}</div>
+                `;
+                chatMessages.appendChild(newMessage);
 
-            const newMessage = document.createElement('div');
-            newMessage.classList.add('message');
-
-            if (fromText.toLowerCase() === 'me' || fromText.toLowerCase() === 'saya') {
-                newMessage.classList.add('sent');
+                // Bersihkan input setelah mengirim
+                messageInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll ke pesan terbaru
             } else {
-                newMessage.classList.add('received');
+                alert('Nama dan pesan tidak boleh kosong!');
             }
-
-            // Ubah innerHTML supaya nama pengirim + pesan tampil
-            newMessage.innerHTML = `<small class="text-muted">${fromText || 'Unknown'}</small><br>${messageText}`;
-            chatMessages.appendChild(newMessage);
-
-            // Scroll otomatis ke bawah
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // Reset input
-            messageInput.value = '';
-            fromInput.value = '';
-            messageInput.focus();
         }
-    </script>
 
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // Kirim pesan saat tombol Enter ditekan di input pesan
+        messageInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 
 </html>

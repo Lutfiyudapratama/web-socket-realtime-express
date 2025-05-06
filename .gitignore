@@ -1,6 +1,8 @@
 .env
 /_server/node_modules/*
 /_server/node_modules
+/notif_server/node_modules/*
+/notif_server/node_modules
 /node_modules/*
 /node_modules
 /tmp/*

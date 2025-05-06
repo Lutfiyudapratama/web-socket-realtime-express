@@ -2,17 +2,17 @@
   "name": "notif_server",
   "version": "1.0.0",
   "description": "notif realtime",
-  "main": " server.js",
+  "main": "server.js",
   "scripts": {
     "test": "npm test",
     "start": "npx nodemon server.js"
   },
   "keywords": [
     "notif",
-    "chatapp",
+    "chatApp",
     "websocket"
   ],
-  "author": "mas lutpi",
+  "author": "mangcecep",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.0",

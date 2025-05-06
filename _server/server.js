@@ -6,7 +6,7 @@ const studentRoutes = require('./routes/studentRoutes')
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-const port = 3000
+const port = 3001
 const hostName = "127.0.0.1"
 
 app.use('/v1/auth', authRoutes(express))
